@@ -35,7 +35,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Sender
             {
                 var queue = _config.CreateQueueClient().GetQueueReference(name);
                 var container = _config.CreateBlobClient().GetContainerReference(name);
-                var v = new StatelessAzureQueueWriter(_config.UnderlyingAccount.Credentials, _streamer, container, queue, name);
+                var v = new StatelessAzureQueueWriter(_streamer, container, queue, name);
                 v.Init();
                 return v;
             });

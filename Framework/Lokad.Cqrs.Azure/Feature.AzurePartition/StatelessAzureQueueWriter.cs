@@ -7,7 +7,6 @@
 
 using System;
 using Lokad.Cqrs.Core.Outbox;
-using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.Feature.AzurePartition
@@ -52,9 +51,8 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             return new CloudQueueMessage(blob);
         }
 
-        public StatelessAzureQueueWriter(StorageCredentials credentials, IEnvelopeStreamer streamer, CloudBlobContainer container, CloudQueue queue, string name)
+        public StatelessAzureQueueWriter(IEnvelopeStreamer streamer, CloudBlobContainer container, CloudQueue queue, string name)
         {
-            _credentials = credentials;
             _streamer = streamer;
             _cloudBlob = container;
             _queue = queue;
@@ -69,7 +67,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
 
 
         const string DateFormatInBlobName = "yyyy-MM-dd-HH-mm-ss-ffff";
-        readonly StorageCredentials _credentials;
         readonly IEnvelopeStreamer _streamer;
         readonly CloudBlobContainer _cloudBlob;
         readonly CloudQueue _queue;
