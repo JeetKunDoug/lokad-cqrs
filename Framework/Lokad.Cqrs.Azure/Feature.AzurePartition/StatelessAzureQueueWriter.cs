@@ -7,6 +7,7 @@
 
 using System;
 using Lokad.Cqrs.Core.Outbox;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.Feature.AzurePartition
@@ -17,7 +18,18 @@ namespace Lokad.Cqrs.Feature.AzurePartition
         public void PutMessage(ImmutableEnvelope envelope)
         {
             var packed = PrepareCloudMessage(envelope);
-            _queue.AddMessage(packed);
+            var now = DateTime.UtcNow;
+            TimeSpan? ttl = null;
+            if (packed.ExpirationTime.HasValue)
+            {
+                ttl = packed.ExpirationTime.Value.Subtract(now);
+            }
+            TimeSpan? visibilityTimeout = envelope.DeliverOnUtc.Subtract(now);
+            if (visibilityTimeout < TimeSpan.FromSeconds(0))
+            {
+                visibilityTimeout = null;
+            }
+            _queue.AddMessage(packed, ttl, visibilityTimeout);
         }
 
         // New azure limit is 64k after BASE 64 conversion. We Are adding 152 on top just to be safe
@@ -40,8 +52,9 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             return new CloudQueueMessage(blob);
         }
 
-        public StatelessAzureQueueWriter(IEnvelopeStreamer streamer, CloudBlobContainer container, CloudQueue queue, string name)
+        public StatelessAzureQueueWriter(StorageCredentials credentials, IEnvelopeStreamer streamer, CloudBlobContainer container, CloudQueue queue, string name)
         {
+            _credentials = credentials;
             _streamer = streamer;
             _cloudBlob = container;
             _queue = queue;
@@ -56,6 +69,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
 
 
         const string DateFormatInBlobName = "yyyy-MM-dd-HH-mm-ss-ffff";
+        readonly StorageCredentials _credentials;
         readonly IEnvelopeStreamer _streamer;
         readonly CloudBlobContainer _cloudBlob;
         readonly CloudQueue _queue;

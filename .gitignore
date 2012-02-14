@@ -15,3 +15,8 @@ _ReSharper.*
 *.pidb
 *.userprefs
 test-results
+*.crunchproject.local.xml
+*.ncrunchproject
+*.crunchsolution.local.xml
+*.ncrunchsolution
+Resource/nuget/*
