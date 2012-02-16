@@ -129,7 +129,7 @@ namespace Sample.Wires
             {
                 builder.AddItem((object)@event);
             }
-            _writer.PutMessage(_streamer.SaveEnvelopeData(builder.Build()));
+            _writer.PutMessage(this._streamer.SaveEnvelopeData(builder.Build()));
         }
 
         void AppendToStream(IIdentity id, string envelopeId, Applied then, string explanation)

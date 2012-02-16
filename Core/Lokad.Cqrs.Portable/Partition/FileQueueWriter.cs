@@ -27,7 +27,7 @@ namespace Lokad.Cqrs.Partition
 
         static long UniversalCounter;
 
-        public void PutMessage(byte[] envelope)
+        public void PutMessage(byte[] envelope, DateTime? deliverOnUtc = null)
         {
             var id = Interlocked.Increment(ref UniversalCounter);
             var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", DateTime.UtcNow, id, Suffix);

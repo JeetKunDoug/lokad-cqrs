@@ -49,7 +49,7 @@ namespace Snippets.HttpEndpoint
             var mouseEvent = JsonSerializer.DeserializeFromString(decodedData, contractType);
 
             envelopeBuilder.AddItem(mouseEvent);
-            _writer.PutMessage(_streamer.SaveEnvelopeData(envelopeBuilder.Build()));
+            _writer.PutMessage(this._streamer.SaveEnvelopeData(envelopeBuilder.Build()));
 
             context.SetStatusTo(HttpStatusCode.OK);
         }

@@ -5,11 +5,13 @@
 
 #endregion
 
+using System;
+
 namespace Lokad.Cqrs.Partition
 {
     public interface IQueueWriter
     {
         string Name { get; }
-        void PutMessage(byte[] envelope);
+        void PutMessage(byte[] envelope, DateTime? deliverOnUtc = null);
     }
 }

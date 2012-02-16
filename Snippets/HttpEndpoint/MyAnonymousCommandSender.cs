@@ -51,7 +51,7 @@ namespace Snippets.HttpEndpoint
                 return;
             }
 
-            _writer.PutMessage(_streamer.SaveEnvelopeData(msg.Build()));
+            _writer.PutMessage(this._streamer.SaveEnvelopeData(msg.Build()));
             context.WriteString(string.Format(@"
 Normally this should be a JSON POST, containing serialized data for {0}
 but let's pretend that you successfully sent a message. Or routed it", contractType));

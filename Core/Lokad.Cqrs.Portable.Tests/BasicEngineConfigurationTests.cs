@@ -57,9 +57,9 @@ namespace Lokad.Cqrs
             var doWriter = config.CreateQueueWriter("do");
             
             // forwarder in => do 
-            raw.Dispatch(config.CreateInbox("in"), doWriter.PutMessage);
+            raw.Dispatch(config.CreateInbox("in"), envelope => doWriter.PutMessage(envelope));
             // forwarder do => in
-            raw.Dispatch(config.CreateInbox("do"), inWriter.PutMessage);
+            raw.Dispatch(config.CreateInbox("do"), envelope => inWriter.PutMessage(envelope));
 
 
             TestConfiguration(inWriter, raw);
@@ -74,7 +74,7 @@ namespace Lokad.Cqrs
             var doWriter = config.CreateQueueWriter("do");
 
             // forwarder do => do
-            raw.Dispatch(config.CreateInbox("do"), doWriter.PutMessage);
+            raw.Dispatch(config.CreateInbox("do"), envelope => doWriter.PutMessage(envelope));
             TestConfiguration(doWriter, raw);
         }
 
@@ -99,7 +99,7 @@ namespace Lokad.Cqrs
             // in => (route1 OR route2)
             raw.Dispatch(config.CreateInbox("in"), bytes => LoadBalance(bytes, route1, route2));
             // forwarder (route1,route2) => do
-            raw.Dispatch(config.CreateInbox("route1", "route2"), doWriter.PutMessage);
+            raw.Dispatch(config.CreateInbox("route1", "route2"), envelope => doWriter.PutMessage(envelope));
 
             raw.Dispatch(config.CreateInbox("do"), bytes => LoadBalance(bytes, route1, route2));
             TestConfiguration(config.CreateQueueWriter("in"), raw);

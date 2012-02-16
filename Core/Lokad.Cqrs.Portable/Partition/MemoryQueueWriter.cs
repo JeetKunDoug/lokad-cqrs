@@ -5,6 +5,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Concurrent;
 
 namespace Lokad.Cqrs.Partition
@@ -21,7 +22,7 @@ namespace Lokad.Cqrs.Partition
             Name = name;
         }
 
-        public void PutMessage(byte[] envelope)
+        public void PutMessage(byte[] envelope, DateTime? deliverOnUtc = null)
         {
             _queue.Add(envelope);
         }

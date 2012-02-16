@@ -15,10 +15,15 @@ namespace Lokad.Cqrs.Feature.AzurePartition
     public sealed class StatelessAzureQueueWriter : IQueueWriter
     {
         public string Name { get; private set; }
-        public void PutMessage(byte[] envelope)
+        public void PutMessage(byte[] envelope, DateTime? deliverOnUtc = null)
         {
+            var delaySpan = TimeSpan.Zero;
+            if (deliverOnUtc.HasValue)
+            {
+                delaySpan = DateTime.UtcNow.Subtract(deliverOnUtc.Value);
+            }
             var packed = PrepareCloudMessage(envelope);
-            _queue.AddMessage(packed);
+            _queue.AddMessage(packed, TimeSpan.MaxValue, delaySpan);
         }
 
         CloudQueueMessage PrepareCloudMessage(byte[] buffer)

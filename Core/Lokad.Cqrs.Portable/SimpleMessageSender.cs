@@ -88,7 +88,7 @@ namespace Lokad.Cqrs
 
             if (Transaction.Current == null)
             {
-                queue.PutMessage(data);
+                queue.PutMessage(data, envelope.DeliverOnUtc);
 
                 SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, false,
                     envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));

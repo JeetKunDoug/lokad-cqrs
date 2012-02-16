@@ -60,7 +60,7 @@ namespace Snippets.PubSubRouter
             // replace with your logic to detect commands.
             if (message.Items.All(m => m.Content is IPS_SampleCommand))
             {
-                _queueFactory.GetWriteQueue("commands").PutMessage(_streamer.SaveEnvelopeData(message));
+                _queueFactory.GetWriteQueue("commands").PutMessage(this._streamer.SaveEnvelopeData(message));
                 return;
             }
             if (message.Items.All(m => m.Content is IPS_SampleEvent))
@@ -156,7 +156,7 @@ event sourcing messages, break them into the separate envelopes.");
             // and duplicates will be handled by the infrastructure
             foreach (var queue in queues)
             {
-                queue.PutMessage(_streamer.SaveEnvelopeData(e));
+                queue.PutMessage(this._streamer.SaveEnvelopeData(e));
             }
         }
 
