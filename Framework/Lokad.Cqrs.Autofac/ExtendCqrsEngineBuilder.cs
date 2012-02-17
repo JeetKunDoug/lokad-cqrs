@@ -7,6 +7,7 @@
 #endregion
 
 using System;
+using System.Linq.Expressions;
 using Autofac;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Feature.HandlerClasses;
@@ -23,7 +24,11 @@ namespace Lokad.Cqrs
         public static void MessagesWithHandlersFromAutofac(this CqrsEngineBuilder builder,
             Action<MessagesWithHandlersConfigurationSyntax> config)
         {
-            builder.MessagesWithHandlers((funq, classes) => AutofacContainerProvider.Build(funq, classes, new ContainerBuilder()), config);
+            builder.MessagesWithHandlers((funq, classes) => AutofacContainerProvider.Build(funq, classes, new ContainerBuilder()), c =>
+                {
+                    c.WithDispatchStrategyFactory((classes, factory, hint, methodContextManager) => new AutofacDispatchStrategy(classes, factory, hint, methodContextManager));
+                    config(c);
+                });
         }
 
         /// <summary>
@@ -35,7 +40,11 @@ namespace Lokad.Cqrs
         public static void MessagesWithHandlersFromAutofac(this CqrsEngineBuilder builder,
             Action<MessagesWithHandlersConfigurationSyntax> config, ContainerBuilder extraConfig)
         {
-            builder.MessagesWithHandlers((funq, classes) => AutofacContainerProvider.Build(funq, classes, extraConfig), config);
+            builder.MessagesWithHandlers((funq, classes) => AutofacContainerProvider.Build(funq, classes, extraConfig), c =>
+            {
+                c.WithDispatchStrategyFactory((classes, factory, hint, methodContextManager) => new AutofacDispatchStrategy(classes, factory, hint, methodContextManager));
+                config(c);
+            });
         }
     }
 }

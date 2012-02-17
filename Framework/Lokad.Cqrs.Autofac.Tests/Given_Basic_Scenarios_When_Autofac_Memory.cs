@@ -39,7 +39,7 @@ namespace Lokad.Cqrs
             config.Memory(m =>
                 {
                     m.AddMemorySender("do");
-                    m.AddMemoryProcess("do", x => x.DispatchAsCommandBatch());
+                    m.AddMemoryProcess("do", x => x.DispatchAsCommandBatchWithAutofac());
                 });
         }
     }

@@ -45,7 +45,7 @@ namespace Lokad.Cqrs.Synthetic
                     m.AddAzureProcess(dev, new[] {"test-incoming"}, c =>
                         {
                             c.QueueVisibility(1);
-                            c.DispatchAsCommandBatch();
+                            c.DispatchAsCommandBatchWithAutofac();
                         });
                     m.AddAzureSender(dev, "test-incoming", x => x.IdGeneratorForTests());
                 });

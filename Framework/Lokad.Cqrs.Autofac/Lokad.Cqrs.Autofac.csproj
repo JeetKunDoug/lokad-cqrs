@@ -35,12 +35,18 @@
       <HintPath>..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutofacExtendIAdvancedDispatchBuilder.cs" />
     <Compile Include="Feature.HandlerClasses\AutofacContainerForHandlerClasses.cs" />
     <Compile Include="Feature.HandlerClasses\AutofacContainerProvider.cs" />
     <Compile Include="ExtendCqrsEngineBuilder.cs" />
+    <Compile Include="Feature.HandlerClasses\AutofacDispatchCommandBatch.cs" />
+    <Compile Include="Feature.HandlerClasses\AutofacDispatchOneEvent.cs" />
+    <Compile Include="Feature.HandlerClasses\AutofacDispatchStrategy.cs" />
     <Compile Include="Feature.HandlerClasses\FunqAdapterForAutofac.cs" />
+    <Compile Include="Feature.HandlerClasses\AutofacHandlerDispatchFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

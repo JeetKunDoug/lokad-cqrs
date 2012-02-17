@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lokad.Cqrs.Core
 {
@@ -50,6 +51,16 @@ namespace Lokad.Cqrs.Core
 		{
 			Register(null, instance);
 		}
+
+        public void RegisterAsRuntimeType(object instance)
+        {
+            var entryType = instance.GetType();
+            var registerMethod = this.GetType().GetMethod("RegisterImpl", BindingFlags.Instance | BindingFlags.NonPublic);
+            var funcType = typeof(Func<,>).MakeGenericType(typeof(Container), entryType);
+            var resolvedMethod = registerMethod.MakeGenericMethod(entryType, funcType);
+            var entryObj = resolvedMethod.Invoke(this, new object[] {null, null});
+            entryObj.GetType().GetMethod("InitializeInstance", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(entryObj, new[] {instance});
+        }
 
 		/// <include file='Container.xdoc' path='docs/doc[@for="Container.Register(name,instance)"]/*'/>
 		public void Register<TService>(string name, TService instance)

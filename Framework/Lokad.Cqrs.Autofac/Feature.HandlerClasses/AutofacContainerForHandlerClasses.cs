@@ -7,6 +7,9 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 
 namespace Lokad.Cqrs.Feature.HandlerClasses
@@ -33,6 +36,13 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         {
             // we'll be resolving only at the item level
             return _lifetimeScope.Resolve(serviceType);
+        }
+
+        public object[] ResolveHandlersByServiceType(Type serviceType)
+        {
+            Type enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
+            var result = (IEnumerable<object>) _lifetimeScope.Resolve(enumerableServiceType);
+            return result.ToArray();
         }
         
         public void Dispose()

@@ -21,7 +21,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         {
             foreach (var handlerType in handlerTypes)
             {
-                builder.RegisterType(handlerType);
+                builder.RegisterType(handlerType).AsImplementedInterfaces();
             }
             // allow handlers to resolve items from the core container
             builder.RegisterSource(new FunqAdapterForAutofac(container));

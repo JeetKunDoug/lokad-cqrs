@@ -48,7 +48,7 @@ namespace Lokad.Cqrs.Synthetic
 
         protected abstract void Wire_partition_to_handler(CqrsEngineBuilder config);
 
-        protected int TestSpeed = 2000;
+        protected int TestSpeed = 5000;
 
         [Test]
         public void Then_permanent_failure_is_quarantined()

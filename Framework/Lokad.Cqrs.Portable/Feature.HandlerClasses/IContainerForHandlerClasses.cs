@@ -20,5 +20,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         /// <param name="serviceType">Type of the service.</param>
         /// <returns>handler instance</returns>
         object ResolveHandlerByServiceType(Type serviceType);
+
+        object[] ResolveHandlersByServiceType(Type handlerType);
     }
 }

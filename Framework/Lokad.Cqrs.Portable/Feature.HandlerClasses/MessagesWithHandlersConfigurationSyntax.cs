@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Transactions;
 using Lokad.Cqrs.Core;
 
@@ -29,6 +30,8 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         HandlerClassTransactionFactory _scopeFactory;
 
         readonly BuildsContainerForMessageHandlerClasses _nestedResolver;
+        Func<IContainerForHandlerClasses, HandlerClassTransactionFactory, Func<Type, Type, MethodInfo>, IMethodContextManager, object> _strategyFactory;
+        Type _strategyType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagesWithHandlersConfigurationSyntax"/> class.
@@ -41,6 +44,8 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
 
             _nestedResolver = factory;
             _scopeFactory = Factory(TransactionScopeOption.RequiresNew);
+            _strategyFactory = (containerForHandler, scopeFactory, lookup, contextManager) =>
+                new DispatchStrategy(containerForHandler, scopeFactory, lookup, contextManager);
         }
 
 
@@ -126,6 +131,11 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
                 .Distinct();
         }
 
+        public void WithDispatchStrategyFactory(Func<IContainerForHandlerClasses, HandlerClassTransactionFactory, Func<Type, Type, MethodInfo>, IMethodContextManager, object> factory)
+        {
+            _strategyFactory = factory;
+        }
+
         public void Configure(Container container)
         {
             _scanner.Constrain(_hint);
@@ -141,9 +151,9 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
                 .ToArray();
 
             var nesting = _nestedResolver(container, consumers);
-            var strategy = new DispatchStrategy(nesting, _scopeFactory, _hint.Lookup, _contextManager);
 
-            container.Register(strategy);
+            var strategy = _strategyFactory(nesting, _scopeFactory, _hint.Lookup, _contextManager);
+            container.RegisterAsRuntimeType(strategy);
             container.Register(builder);
         }
 

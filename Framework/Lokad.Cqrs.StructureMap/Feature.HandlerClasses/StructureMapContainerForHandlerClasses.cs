@@ -7,6 +7,9 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using StructureMap;
 
 namespace Lokad.Cqrs.Feature.HandlerClasses
@@ -43,6 +46,12 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         public object ResolveHandlerByServiceType(Type serviceType)
         {
             return _container.GetInstance(serviceType);
+        }
+
+        public object[] ResolveHandlersByServiceType(Type handlerType)
+        {
+            var result = _container.GetAllInstances(handlerType).Cast<object>();
+            return result.ToArray();
         }
 
         public void Dispose()

@@ -62,7 +62,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                     m.AddAzureProcess(account, new[] {"test-incoming"}, c =>
                         {
                             c.QueueVisibility(1);
-                            c.DispatchAsCommandBatch();
+                            c.DispatchAsCommandBatchWithAutofac();
                         });
                     m.AddAzureSender(account, "test-incoming", x => x.IdGeneratorForTests());
                 });
