@@ -40,9 +40,14 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
 
         public object[] ResolveHandlersByServiceType(Type serviceType)
         {
-            Type enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-            var result = (IEnumerable<object>) _lifetimeScope.Resolve(enumerableServiceType);
-            return result.ToArray();
+            var enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
+            object result;
+            // Look for unkeyed implementation in case caller has "wrapped" using decorators. If not found, look for our "implementation" version
+            if (!_lifetimeScope.TryResolve(enumerableServiceType, out result) || !((IEnumerable<object>)result).Any())
+            {
+                result = _lifetimeScope.ResolveNamed("implementation", enumerableServiceType);
+            }
+            return ((IEnumerable<object>)result).ToArray();
         }
         
         public void Dispose()

@@ -7,8 +7,10 @@
 #endregion
 
 using System;
+using System.Linq;
 using Autofac;
-using Lokad.Cqrs.Core;
+using Autofac.Core;
+using Container = Lokad.Cqrs.Core.Container;
 
 namespace Lokad.Cqrs.Feature.HandlerClasses
 {
@@ -21,7 +23,11 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         {
             foreach (var handlerType in handlerTypes)
             {
-                builder.RegisterType(handlerType).AsImplementedInterfaces();
+                builder.RegisterType(handlerType).As(
+                    handlerType.GetInterfaces().
+                    Where(i => i.IsClosedTypeOf(typeof(IHandle<>)))
+                    .Select(i => new KeyedService("implementation", i))
+                    .Cast<Service>().ToArray());
             }
             // allow handlers to resolve items from the core container
             builder.RegisterSource(new FunqAdapterForAutofac(container));
